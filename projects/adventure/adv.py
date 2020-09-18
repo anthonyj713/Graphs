@@ -3,6 +3,7 @@ from player import Player
 from world import World
 
 import random
+from random import choice
 from ast import literal_eval
 
 # Load world
@@ -29,6 +30,81 @@ player = Player(world.starting_room)
 # traversal_path = ['n', 'n']
 traversal_path = []
 
+visited = set()
+prev_move = ''
+next_move = ''
+rooms = {}
+
+
+next_move = 'n'
+traversal_path.append(next_move)
+
+while len(visited) < 500:
+    player.travel(next_move)
+    visited.add(player.current_room.id)
+
+    prev_move = next_move
+    
+    if prev_move == 'n':
+        if 'e' in player.current_room.get_exits():
+            next_move = 'e'
+        elif 'n' in player.current_room.get_exits():
+            next_move = 'n'
+        elif 'w' in player.current_room.get_exits():
+            next_move = 'w'
+        else:
+            next_move = 's'
+
+    elif prev_move == 'e':
+        if 's' in player.current_room.get_exits():
+            next_move = 's'
+        elif 'e' in player.current_room.get_exits():
+            next_move = 'e'
+        elif 'n' in player.current_room.get_exits():
+            next_move = 'n'
+        else:
+            next_move = 'w'
+
+    elif prev_move == 's':
+        if 'w' in player.current_room.get_exits():
+            next_move = 'w'
+        elif 's' in player.current_room.get_exits():
+            next_move = 's'
+        elif 'e' in player.current_room.get_exits():
+            next_move = 'e'
+        else:
+            next_move = 'n'
+
+    elif prev_move == 'w':
+        if 'n' in player.current_room.get_exits():
+            next_move = 'n'
+        elif 'w' in player.current_room.get_exits():
+            next_move = 'w'
+        elif 's' in player.current_room.get_exits():
+            next_move = 's'
+        else:
+            next_move = 'e'
+
+   
+
+    if len(player.current_room.get_exits()) == 4:
+        current = player.current_room.id 
+
+        if current not in rooms:
+            rooms[current] = []
+
+        if next_move not in rooms[current]:
+            rooms[current].append(next_move)
+
+        elif len(rooms[current]) < 4:
+            next_move = choice([i for i in ['n', 'e', 's', 'w']if i not in rooms[current]])
+            rooms[current].append(next_move)
+
+        else:
+            next_move = rooms[current][len(rooms[current])%4]
+            rooms[current].append(next_move)
+
+    traversal_path.append(next_move)
 
 
 # TRAVERSAL TEST
@@ -60,3 +136,4 @@ while True:
         break
     else:
         print("I did not understand that command.")
+
